@@ -17,8 +17,8 @@ pipeline {
         }
         stage('deployments'){
             steps {
-                Build : 'deploy-to-staging'
-                Build : 'deploy-to-prod'
+                build : 'deploy-to-staging'
+                build : 'deploy-to-prod'
             }
             }
 
