@@ -15,5 +15,19 @@ pipeline {
                 }
             }
         }
-    }
+                    post {
+                        success {
+                            echo 'Now Deploying to Staging....'
+                            stage('Deployments'){
+                                steps{
+                                     Build 'deploy-to-staging'
+                                     Build manual 'deploy-to-prod'
+                                }
+                            }
+                        }
+                    }
+       }
 }
+                               
+
+                               
