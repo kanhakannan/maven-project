@@ -15,13 +15,29 @@ pipeline {
                 }
             }
         }
-        stage('deployments'){
+        stage('deploy to staging'){
             steps {
                 build 'deploy-to-staging'
+            }
+        }
+            stage('deploy to prod'){
+            steps {
+                timeout(time:5, unit:'DAYS'){
+                    input message:'Approve PRODUCTION Deployment?'
+                }
                 build 'deploy-to-prod'
             }
+        post {
+                success {
+                    echo 'Code deployed to Production.'
+                }
+
+                failure {
+                    echo ' Deployment failed.'
+                }
             }
-
         }
-    }
 
+
+    }
+}
