@@ -1,6 +1,9 @@
 pipeline {
     agent any
 
+tools {
+        maven 'localMaven'
+}
     parameters {
          string(name: 'staging', defaultValue: '18.208.129.98', description: 'Staging Server')
          string(name: 'deploying', defaultValue: '54.175.181.70', description: 'Production Server')
@@ -13,7 +16,7 @@ pipeline {
 stages{
         stage('Build'){
             steps {
-                sh 'mvn clean package'
+                bat 'call mvn clean package'
             }
             post {
                 success {
