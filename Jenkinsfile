@@ -1,12 +1,19 @@
 pipeline {
     agent any
-    tools {
-        maven 'localMAVEN'
+
+    parameters {
+         string(name: 'staging', defaultValue: '18.208.129.98', description: 'Staging Server')
+         string(name: 'deploying', defaultValue: '54.175.181.70', description: 'Production Server')
     }
-       stages{
+
+    triggers {
+         pollSCM('* * * * *')
+     }
+
+stages{
         stage('Build'){
             steps {
-              bat 'call mvn clean package'            
+                sh 'mvn clean package'
             }
             post {
                 success {
@@ -15,29 +22,21 @@ pipeline {
                 }
             }
         }
-        stage('deploy to staging'){
-            steps {
-                build 'deploy-to-staging'
-            }
-        }
-            stage('deploy to prod'){
-            steps {
-                timeout(time:5, unit:'DAYS'){
-                    input message:'Approve PRODUCTION Deployment?'
-                }
-                build 'deploy-to-prod'
-            }
-        post {
-                success {
-                    echo 'Code deployed to Production.'
+
+        stage ('Deployments'){
+            parallel{
+                stage ('Deploy to Staging'){
+                    steps {
+                        sh "scp -i F:/LATEST JENKINS/bitnami/tomcatbybitnami.pem **/target/*.war ubuntu@ec2${params.staging}:/opt/bitnami/apache-tomcat/webapps"
+                    }
                 }
 
-                failure {
-                    echo ' Deployment failed.'
+                stage ("Deploy to Production"){
+                    steps {
+                        sh "scp -i F:/LATEST JENKINS/bitnami/tomcatbybitnami2.pem **/target/*.war ubuntu@ec2${params.deploying}:/opt/bitnami/apache-tomcat/webapps"
+                    }
                 }
             }
         }
-
-
     }
 }
