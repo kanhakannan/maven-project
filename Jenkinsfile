@@ -30,13 +30,13 @@ stages{
             parallel{
                 stage ('Deploy to Staging'){
                     steps {
-                        bat "cp -i F:/LATEST JENKINS/bitnami/tomcatbybitnami.pem **/target/*.war ubuntu@ec2${params.staging}:/opt/bitnami/apache-tomcat/webapps"
+                        bat "pscp -i F:/LATEST JENKINS/bitnami/tomcatbybitnami.pem **/target/*.war ubuntu@ec2${params.staging}:/opt/bitnami/apache-tomcat/webapps"
                     }
                 }
 
                 stage ("Deploy to Production"){
                     steps {
-                        bat "cp -i F:/LATEST JENKINS/bitnami/tomcatbybitnami2.pem **/target/*.war ubuntu@ec2${params.deploying}:/opt/bitnami/apache-tomcat/webapps"
+                        bat "pscp -i F:/LATEST JENKINS/bitnami/tomcatbybitnami2.pem **/target/*.war ubuntu@ec2${params.deploying}:/opt/bitnami/apache-tomcat/webapps"
                     }
                 }
             }
